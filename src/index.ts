@@ -16,6 +16,10 @@ export const bot = new Gitty(client);
 const app: Express = express();
 const port = 3004;
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
 app.listen(port, () => {
   console.log(`Listening at ${port}`);
 });
