@@ -26,7 +26,7 @@ export class Gitty {
       config.discordToken,
     );
     const slashCommands: Array<Command> = [
-      InviteMember
+      InviteMember,
     ];
 
     this.slashCommandMap = slashCommands.reduce((map, command) => {
