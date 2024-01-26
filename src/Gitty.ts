@@ -1,5 +1,6 @@
 import { Client, Events, Interaction, REST, Routes } from "discord.js";
-import InviteMember from "./commands/\bInviteMember";
+import InviteMember from "./commands/InviteMember";
+import ListRepository from "./commands/ListRepository";
 import { Command } from "./interfaces/Command";
 import { config } from "./utils/config";
 
@@ -27,6 +28,7 @@ export class Gitty {
     );
     const slashCommands: Array<Command> = [
       InviteMember,
+      ListRepository
     ];
 
     this.slashCommandMap = slashCommands.reduce((map, command) => {
