@@ -19,7 +19,7 @@ export default {
     })
 
     const data = await octokit.request('GET /orgs/{org}/repos', {
-      org: 'GSM-MSG ',
+      org: 'GSM-MSG',
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
