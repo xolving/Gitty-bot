@@ -15,7 +15,7 @@ export default {
     .addStringOption((option) => option
       .setName("role")
       .setDescription("추가할 역할을 입력해주세요.")
-      .setRequired(true)
+      .setRequired(false)
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
@@ -24,19 +24,28 @@ export default {
     const organization = server?.map(data => data.github_organization ?? "")
 
     const email = interaction.options.getString("email") ?? ""
-    const role = interaction.options.getString("role") ?? ""
+    const role = interaction.options.getString("role")
 
     const octokit = new Octokit({
       auth: `Bearer ${token}`,
     });
 
-    await octokit.request(`POST /orgs/${organization}/invitations`, {
-      email: `${email}`,
-      role: `${role}`,
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
-      }
-    })
+    if(role != null){
+      await octokit.request(`POST /orgs/${organization}/invitations`, {
+        email: `${email}`,
+        role: `${role}`,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      })
+    } else {
+      await octokit.request(`POST /orgs/${organization}/invitations`, {
+        email: `${email}`,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      })
+    }
 
     await interaction.reply({
       content: `성공적으로 초대를 보냈습니다.`,
