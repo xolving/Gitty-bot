@@ -12,17 +12,11 @@ export default {
       .setDescription("초대할 멤버의 이메일을 입력해주세요.")
       .setRequired(true)
     )
-    .addStringOption(option =>
-      option.setName('role')
-        .setDescription('Github 역할을 선택해주세요.')
-        .setRequired(false)
-        .addChoices(
-          { name: 'Android', value: 'Android.Team' },
-          { name: 'Backend', value: 'BackEnd.Team' },
-          { name: 'Frontend', value: 'Front.Team' },
-          { name: 'DevOps', value: 'Dev-Ops-Engineer.Team' },
-          { name: 'iOS', value: 'iOS.Team' },
-        )),
+    .addStringOption((option) => option
+      .setName("role")
+      .setDescription("추가할 역할을 입력해주세요.")
+      .setRequired(true)
+    ),
 
   async execute(interaction: ChatInputCommandInteraction) {
     const server = await selectServer(interaction.guildId ?? "")
