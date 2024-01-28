@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Octokit } from "octokit";
 import { Command } from "../interfaces/Command";
-import { config } from "../utils/config";
+import { selectServer } from "../utils/supabase";
 
 export default {
   data: new SlashCommandBuilder()
@@ -25,20 +25,20 @@ export default {
         )),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    const email = interaction.options.getString("email")
+    const server = await selectServer(interaction.guildId ?? "")
+    const token = server?.map(data => data.github_token ?? "")
+    const organization = server?.map(data => data.github_organization ?? "")
+
+    const email = interaction.options.getString("email") ?? ""
     const role = interaction.options.getString("role") ?? ""
 
     const octokit = new Octokit({
-      auth: `Bearer ${config.githubToken}`,
+      auth: `Bearer ${token}`,
     });
 
-    await octokit.request('POST /orgs/GSM-MSG/invitations', {
+    await octokit.request(`POST /orgs/${organization}/invitations`, {
       email: `${email}`,
       role: `${role}`,
-      // team_ids: [
-      //   12,
-      //   26
-      // ],
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }

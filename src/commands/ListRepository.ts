@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "
 import { Octokit } from "octokit";
 import { Command } from "../interfaces/Command";
 import { config } from "../utils/config";
+import { selectServer } from "../utils/supabase";
 
 interface Repository {
   name: string,
@@ -14,26 +15,20 @@ export default {
     .setDescription("Repository 목록을 조회합니다."),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    const server = await selectServer(interaction.guildId ?? "")
+    const organization = server?.map(data => data.github_organization)
+
     const octokit = new Octokit({
       auth: `Bearer ${config.githubToken}`
     })
 
-    const data = await octokit.request('GET /orgs/{org}/repos', {
-      org: 'GSM-MSG',
+    const data = await octokit.request(`GET /orgs/${organization}/repos`, {
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     })
 
-    // await interaction.reply({
-    //   content: `${repositories.data.at(0)?.name}`,
-    // });
-    
     const repositories = new Array<Repository>
-    const repos = data.data.forEach(repo => repositories.push({
-      name: repo.name,
-      description: repo.description ?? ""
-    }))
 
     await interaction.reply({
       embeds: [
