@@ -29,6 +29,10 @@ export default {
     })
 
     const repositories = new Array<Repository>
+    const repos = data.data.forEach((repo:any) => repositories.push({
+      name: repo.name,
+      description: repo.description ?? ""
+    }))
 
     await interaction.reply({
       embeds: [
