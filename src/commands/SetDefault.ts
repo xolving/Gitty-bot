@@ -24,7 +24,8 @@ export default {
 
     insertServer(organization, id, token)
     await interaction.reply({
-      content: '성공적으로 연동이 완료되었습니다.'
+      content: '성공적으로 연동이 완료되었습니다.',
+      ephemeral: true
     });
   },
 } as Command;
