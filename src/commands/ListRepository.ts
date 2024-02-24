@@ -1,13 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { Octokit } from "octokit";
 import { Command } from "../interfaces/Command";
-import { config } from "../utils/config";
 import { selectServer } from "../utils/supabase";
-
-interface Repository {
-  name: string,
-  description: string
-}
 
 export default {
   data: new SlashCommandBuilder()
@@ -15,32 +9,31 @@ export default {
     .setDescription("Repository 목록을 조회합니다."),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    const server = await selectServer(interaction.guildId ?? "")
-    const organization = server?.map(data => data.github_organization)
+    const servers = await selectServer(interaction.guildId ?? "");
+    const server = servers?.at(0);
 
     const octokit = new Octokit({
-      auth: `Bearer ${config.githubToken}`
+      auth: `Bearer ${server.github_token}`
     })
 
-    const data = await octokit.request(`GET /orgs/${organization}/repos`, {
+    const repositories = await octokit.request(`GET /orgs/${server.github_organization}/repos`, {
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     })
 
-    const repositories = new Array<Repository>
-    const repos = data.data.forEach((repo:any) => repositories.push({
-      name: repo.name,
-      description: repo.description ?? ""
-    }))
+    const info: any[] = repositories.data.map((repo: any) => {
+      return {
+        name: repo.name,
+        description: repo.description,
+      }
+    })
 
     await interaction.reply({
       embeds: [
         new EmbedBuilder()
           .setTitle("Repositories")
-          .setDescription(`${repositories.map(function(element){
-            return `${element.name}` + '\n'
-          })}`)
+          .setDescription(`${info.map((repo) => `${repo.name}` + '\n')}`)
       ]
     });
   },

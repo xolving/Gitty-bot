@@ -1,6 +1,7 @@
 import { Client, Events, Interaction, REST, Routes } from "discord.js";
 import InviteMember from "./commands/InviteMember";
 import ListRepository from "./commands/ListRepository";
+import SendEmbed from "./commands/SendEmbed";
 import SetDefault from "./commands/SetDefault";
 import { Command } from "./interfaces/Command";
 import { config } from "./utils/config";
@@ -30,7 +31,8 @@ export class Gitty {
     const slashCommands: Array<Command> = [
       InviteMember,
       ListRepository,
-      SetDefault
+      SetDefault,
+      SendEmbed
     ];
 
     this.slashCommandMap = slashCommands.reduce((map, command) => {
