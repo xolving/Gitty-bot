@@ -1,10 +1,13 @@
-import { Client, Events, Interaction, REST, Routes } from "discord.js";
+import { Client, Events, GuildMember, Interaction, REST, Routes } from "discord.js";
 import InviteMember from "./commands/InviteMember";
 import ListRepository from "./commands/ListRepository";
 import SendEmbed from "./commands/SendEmbed";
-import SetDefault from "./commands/SetDefault";
+import SetFirstRole from "./commands/SetFirstRole";
+import SetGithub from "./commands/SetGithub";
+import SetInitial from "./commands/SetInitial";
 import { Command } from "./interfaces/Command";
 import { config } from "./utils/config";
+import { selectServer } from "./utils/supabase";
 
 export class Gitty {
   private slashCommandMap = new Map<string, Command>();
@@ -22,6 +25,7 @@ export class Gitty {
     this.client.on("error", console.error);
 
     this.onInteractionReceived();
+    this.onGuildMemberAdd();
   }
 
   private async registerSlashCommands() {
@@ -31,8 +35,10 @@ export class Gitty {
     const slashCommands: Array<Command> = [
       InviteMember,
       ListRepository,
-      SetDefault,
-      SendEmbed
+      SetGithub,
+      SendEmbed,
+      SetFirstRole,
+      SetInitial
     ];
 
     this.slashCommandMap = slashCommands.reduce((map, command) => {
@@ -69,5 +75,13 @@ export class Gitty {
         }
       },
     );
+  }
+
+  private async onGuildMemberAdd() {
+    this.client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
+      const guilds = await selectServer(member.guild.id);
+      
+      member.roles.add(guilds?.at(0).first_role);
+    });
   }
 }

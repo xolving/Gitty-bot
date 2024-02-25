@@ -8,7 +8,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
-  ],
+  ]
 });
 
 export const bot = new Gitty(client);

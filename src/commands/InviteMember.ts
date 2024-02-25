@@ -19,6 +19,8 @@ export default {
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    if(!interaction.memberPermissions?.has("Administrator")) return
+
     const server = await selectServer(interaction.guildId ?? "")
     const token = server?.map(data => data.github_token ?? "")
     const organization = server?.map(data => data.github_organization ?? "")

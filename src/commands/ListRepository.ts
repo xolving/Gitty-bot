@@ -9,6 +9,8 @@ export default {
     .setDescription("Repository 목록을 조회합니다."),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    if(!interaction.memberPermissions?.has("Administrator")) return
+
     const servers = await selectServer(interaction.guildId ?? "");
     const server = servers?.at(0);
 
