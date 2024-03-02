@@ -79,9 +79,12 @@ export class Gitty {
 
   private async onGuildMemberAdd() {
     this.client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
-      const guilds = await selectServer(member.guild.id);
+      const guilds = await selectServer(member.guild.id) ?? [];
+      const guild = guilds.at(0)
       
-      member.roles.add(guilds?.at(0).first_role);
+      if(guild.first_role){
+        member.roles.add(guild.first_role);
+      }
     });
   }
 }
